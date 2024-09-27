@@ -77,8 +77,8 @@ def on_install_complete():
     log_and_show_message('LSP-serenata: Server installed.')
 
 
-def is_php_installed(plugin) -> bool:
-    php_path = plugin.config.settings['phpPath'] or 'php'
+def is_php_installed(settings) -> bool:
+    php_path = settings['phpPath'] or 'php'
 
     found = shutil.which(php_path) or os.path.isfile(php_path)
 
@@ -166,7 +166,11 @@ class LspSerenataPlugin(LanguageHandler):
 
 
     def on_start(self, window) -> bool:
-        if not is_php_installed(self):
+        settings = sublime.load_settings("LSP-serenata.sublime-settings")
+        client_configuration = settings.get('client')
+        client_settings = client_configuration['settings']
+
+        if not is_php_installed(client_settings):
             sublime.status_message(
                 'Please install PHP 7.1 or later for the PHP Language Server to work.'
             )
